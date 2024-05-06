@@ -5,26 +5,36 @@ import Barchart from "./components/Barchart";
 const SampleData = [
   {
     name: "All Negative",
+    unitX: "unit/X0",
+    unitY: "unit/Y0",
     dataX: ["A", "B", "C", "D", "E", "F", "G"],
     dataY: [-10, -50, -100, -150, -200, -250, -300],
   },
   {
     name: "All Positive",
+    unitX: "unit/X1",
+    unitY: "unit/Y1",
     dataX: ["A", "B", "C", "D", "E", "F", "G"],
     dataY: [10, 50, 100, 150, 200, 250, 300],
   },
   {
     name: "Positive and Negative",
+    unitX: "unit/X2",
+    unitY: "unit/Y2",
     dataX: ["A", "B", "C", "D", "E", "F", "G"],
     dataY: [-10, 50, -100, 150, -200, 250, 300],
   },
   {
     name: "Longer Data",
+    unitX: "unit/X3",
+    unitY: "unit/Y3",
     dataX: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
     dataY: [10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500],
   },
   {
     name: "Shorter Data",
+    unitX: "unit/X4",
+    unitY: "unit/Y4",
     dataX: ["A", "B", "C"],
     dataY: [100, 300, 500],
   },
@@ -88,24 +98,38 @@ function App() {
           }}
         >
           {SampleData.map((item, index) => {
-            return <option value={index}>{item.name}</option>;
+            return (
+              <option key={`option-${item.name}`} value={index}>
+                {item.name}
+              </option>
+            );
           })}
         </select>
         <br />
         <div style={{ width: "100%", overflowX: "scroll" }}>
+          <span style={{ marginRight: 10 }}>
+            <b>UnitX: </b>
+            {SampleData[cDataIndex].unitX}
+          </span>
+          <span>
+            <b>UnitY: </b>
+            {SampleData[cDataIndex].unitY}
+          </span>
           <table border={1}>
-            <tr>
-              <th>DataX:</th>
-              {SampleData[cDataIndex].dataX.map((item) => {
-                return <td>{item}</td>;
-              })}
-            </tr>
-            <tr>
-              <th>DataY:</th>
-              {SampleData[cDataIndex].dataY.map((item) => {
-                return <td>{item}</td>;
-              })}
-            </tr>
+            <tbody>
+              <tr>
+                <th>DataX:</th>
+                {SampleData[cDataIndex].dataX.map((item, index) => {
+                  return <td key={`controll-td-0-${index}`}>{item}</td>;
+                })}
+              </tr>
+              <tr>
+                <th>DataY:</th>
+                {SampleData[cDataIndex].dataY.map((item, index) => {
+                  return <td key={`controll-td-1-${index}`}>{item}</td>;
+                })}
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
@@ -116,6 +140,8 @@ function App() {
       >
         <Barchart
           fill={cFill}
+          unitX={SampleData[cDataIndex].unitX}
+          unitY={SampleData[cDataIndex].unitY}
           dataX={SampleData[cDataIndex].dataX}
           dataY={SampleData[cDataIndex].dataY}
         />
