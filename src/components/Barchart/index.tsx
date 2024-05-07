@@ -135,7 +135,7 @@ const DrawChart = (
     .append("div")
     .attr("class", "svg-barchart-tooltip")
     .style("height", "20px")
-    .style("position", "fixed")
+    .style("position", "absolute")
     .style("padding", "5px")
     .style("background", "#fff")
     .style("border-radius", "3px")
