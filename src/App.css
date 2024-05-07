@@ -1,40 +1,35 @@
-#container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
+.container {
+  position: relative;
   border: 2px solid black;
   border-radius: 5px;
-  transform: translate(-50%, -50%);
 }
 
-#controller {
-  position: absolute;
-  left: 0%;
-  top: 0%;
+.controller {
+  position: static;
   margin: 10px;
   padding: 10px;
   width: 300px;
   border: 2px dashed black;
   border-radius: 5px;
 }
-#controller > * {
+.controller > * {
   margin: 5px 0px;
 }
-#controller label {
+.controller label {
   font-size: 15px;
   font-weight: 600;
   margin-right: 10px;
 }
-#controller table {
+.controller table {
   text-align: center;
 }
-#controller table * {
+.controller table * {
   padding: 5px;
 }
-#controller table th {
+.controller table th {
   font-size: 13px;
   font-weight: 600;
 }
-#controller table td {
+.controller table td {
   font-size: 12px;
 }

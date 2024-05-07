@@ -47,128 +47,258 @@ function App() {
   const [cDisplayLabel, setCDisplayLabel] = useState(true);
   const [cDisplayTooltip, setCDisplayTooltip] = useState(true);
   const [cDataIndex, setCDataIndex] = useState(2);
+  const [cWidth2, setCWidth2] = useState(500);
+  const [cHeight2, setCHeight2] = useState(450);
+  const [cFill2, setCFill2] = useState("rgb(70, 155, 221)");
+  const [cDisplayLabel2, setCDisplayLabel2] = useState(true);
+  const [cDisplayTooltip2, setCDisplayTooltip2] = useState(true);
+  const [cDataIndex2, setCDataIndex2] = useState(3);
 
   return (
     <>
-      <div id="controller">
-        <label>Width:</label>
-        <br />
-        <input
-          id="input-width"
-          type="range"
-          value={cWidth}
-          min={100}
-          max={800}
-          step={1}
-          onInput={(e: any) => {
-            setCWidth(e.target.value);
-          }}
-        />
-        <label> {cWidth}px</label>
-        <br />
-        <label>Height:</label>
-        <br />
-        <input
-          id="input-height"
-          type="range"
-          value={cHeight}
-          min={100}
-          max={800}
-          step={1}
-          onInput={(e: any) => {
-            setCHeight(e.target.value);
-          }}
-        />
-        <label> {cHeight}px</label>
-        <br />
-        <label>Color:</label>
-        <input
-          id="input-color"
-          type="color"
-          value={cFill}
-          onChange={(e: any) => {
-            setCFill(e.target.value);
-          }}
-        />
-        <br />
-        <label>Display Label:</label>
-        <input
-          type="checkbox"
-          id="input-label-checkbox"
-          checked={cDisplayLabel}
-          onChange={(e) => {
-            setCDisplayLabel(!cDisplayLabel);
-          }}
-        />
-        <br />
-        <label>Display Tooltip:</label>
-        <input
-          type="checkbox"
-          id="input-tooltip-checkbox"
-          checked={cDisplayTooltip}
-          onChange={(e) => {
-            setCDisplayTooltip(!cDisplayTooltip);
-          }}
-        />
-        <br />
-        <label>Sample Data:</label>
-        <select
-          value={cDataIndex}
-          id="input-dataSelect"
-          onChange={(e) => {
-            setCDataIndex(Number(e.target.value));
-          }}
-        >
-          {SampleData.map((item, index) => {
-            return (
-              <option key={`option-${item.name}`} value={index}>
-                {item.name}
-              </option>
-            );
-          })}
-        </select>
-        <br />
-        <div style={{ width: "100%", overflowX: "scroll" }}>
-          <span style={{ marginRight: 10 }}>
-            <b>UnitX: </b>
-            {SampleData[cDataIndex].unitX}
-          </span>
-          <span>
-            <b>UnitY: </b>
-            {SampleData[cDataIndex].unitY}
-          </span>
-          <table border={1}>
-            <tbody>
-              <tr>
-                <th>DataX:</th>
-                {SampleData[cDataIndex].dataX.map((item, index) => {
-                  return <td key={`controll-td-0-${index}`}>{item}</td>;
-                })}
-              </tr>
-              <tr>
-                <th>DataY:</th>
-                {SampleData[cDataIndex].dataY.map((item, index) => {
-                  return <td key={`controll-td-1-${index}`}>{item}</td>;
-                })}
-              </tr>
-            </tbody>
-          </table>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="controller">
+          <label>Width:</label>
+          <br />
+          <input
+            className="input-width"
+            type="range"
+            value={cWidth}
+            min={100}
+            max={800}
+            step={1}
+            onInput={(e: any) => {
+              setCWidth(e.target.value);
+            }}
+          />
+          <label> {cWidth}px</label>
+          <br />
+          <label>Height:</label>
+          <br />
+          <input
+            className="input-height"
+            type="range"
+            value={cHeight}
+            min={100}
+            max={800}
+            step={1}
+            onInput={(e: any) => {
+              setCHeight(e.target.value);
+            }}
+          />
+          <label> {cHeight}px</label>
+          <br />
+          <label>Color:</label>
+          <input
+            className="input-color"
+            type="color"
+            value={cFill}
+            onChange={(e: any) => {
+              setCFill(e.target.value);
+            }}
+          />
+          <br />
+          <label>Display Label:</label>
+          <input
+            type="checkbox"
+            className="input-label-checkbox"
+            checked={cDisplayLabel}
+            onChange={(e) => {
+              setCDisplayLabel(!cDisplayLabel);
+            }}
+          />
+          <br />
+          <label>Display Tooltip:</label>
+          <input
+            type="checkbox"
+            className="input-tooltip-checkbox"
+            checked={cDisplayTooltip}
+            onChange={(e) => {
+              setCDisplayTooltip(!cDisplayTooltip);
+            }}
+          />
+          <br />
+          <label>Sample Data:</label>
+          <select
+            value={cDataIndex}
+            className="input-dataSelect"
+            onChange={(e) => {
+              setCDataIndex(Number(e.target.value));
+            }}
+          >
+            {SampleData.map((item, index) => {
+              return (
+                <option key={`option-${item.name}`} value={index}>
+                  {item.name}
+                </option>
+              );
+            })}
+          </select>
+          <br />
+          <div style={{ width: "100%", overflowX: "scroll" }}>
+            <span style={{ marginRight: 10 }}>
+              <b>UnitX: </b>
+              {SampleData[cDataIndex].unitX}
+            </span>
+            <span>
+              <b>UnitY: </b>
+              {SampleData[cDataIndex].unitY}
+            </span>
+            <table border={1}>
+              <tbody>
+                <tr>
+                  <th>DataX:</th>
+                  {SampleData[cDataIndex].dataX.map((item, index) => {
+                    return <td key={`controll-td-0-${index}`}>{item}</td>;
+                  })}
+                </tr>
+                <tr>
+                  <th>DataY:</th>
+                  {SampleData[cDataIndex].dataY.map((item, index) => {
+                    return <td key={`controll-td-1-${index}`}>{item}</td>;
+                  })}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="controller">
+          <label>Width:</label>
+          <br />
+          <input
+            className="input-width"
+            type="range"
+            value={cWidth2}
+            min={100}
+            max={800}
+            step={1}
+            onInput={(e: any) => {
+              setCWidth2(e.target.value);
+            }}
+          />
+          <label> {cWidth2}px</label>
+          <br />
+          <label>Height:</label>
+          <br />
+          <input
+            className="input-height"
+            type="range"
+            value={cHeight2}
+            min={100}
+            max={800}
+            step={1}
+            onInput={(e: any) => {
+              setCHeight2(e.target.value);
+            }}
+          />
+          <label> {cHeight2}px</label>
+          <br />
+          <label>Color:</label>
+          <input
+            className="input-color"
+            type="color"
+            value={cFill2}
+            onChange={(e: any) => {
+              setCFill2(e.target.value);
+            }}
+          />
+          <br />
+          <label>Display Label:</label>
+          <input
+            type="checkbox"
+            className="input-label-checkbox"
+            checked={cDisplayLabel2}
+            onChange={(e) => {
+              setCDisplayLabel2(!cDisplayLabel2);
+            }}
+          />
+          <br />
+          <label>Display Tooltip:</label>
+          <input
+            type="checkbox"
+            className="input-tooltip-checkbox"
+            checked={cDisplayTooltip2}
+            onChange={(e) => {
+              setCDisplayTooltip2(!cDisplayTooltip2);
+            }}
+          />
+          <br />
+          <label>Sample Data:</label>
+          <select
+            value={cDataIndex2}
+            className="input-dataSelect"
+            onChange={(e) => {
+              setCDataIndex2(Number(e.target.value));
+            }}
+          >
+            {SampleData.map((item, index) => {
+              return (
+                <option key={`option2-${item.name}`} value={index}>
+                  {item.name}
+                </option>
+              );
+            })}
+          </select>
+          <br />
+          <div style={{ width: "100%", overflowX: "scroll" }}>
+            <span style={{ marginRight: 10 }}>
+              <b>UnitX: </b>
+              {SampleData[cDataIndex2].unitX}
+            </span>
+            <span>
+              <b>UnitY: </b>
+              {SampleData[cDataIndex2].unitY}
+            </span>
+            <table border={1}>
+              <tbody>
+                <tr>
+                  <th>DataX:</th>
+                  {SampleData[cDataIndex2].dataX.map((item, index) => {
+                    return <td key={`controll2-td-0-${index}`}>{item}</td>;
+                  })}
+                </tr>
+                <tr>
+                  <th>DataY:</th>
+                  {SampleData[cDataIndex2].dataY.map((item, index) => {
+                    return <td key={`controll2-td-1-${index}`}>{item}</td>;
+                  })}
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <div
-        id="container"
-        key="barchart-container"
-        style={{ width: `${cWidth}px`, height: `${cHeight}px` }}
-      >
-        <Barchart
-          fill={cFill}
-          unitX={SampleData[cDataIndex].unitX}
-          unitY={SampleData[cDataIndex].unitY}
-          displayLabel={cDisplayLabel}
-          displayTooltip={cDisplayTooltip}
-          dataX={SampleData[cDataIndex].dataX}
-          dataY={SampleData[cDataIndex].dataY}
-        />
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div
+          className="container"
+          key="barchart-container"
+          style={{ width: `${cWidth}px`, height: `${cHeight}px` }}
+        >
+          <Barchart
+            fill={cFill}
+            unitX={SampleData[cDataIndex].unitX}
+            unitY={SampleData[cDataIndex].unitY}
+            displayLabel={cDisplayLabel}
+            displayTooltip={cDisplayTooltip}
+            dataX={SampleData[cDataIndex].dataX}
+            dataY={SampleData[cDataIndex].dataY}
+          />
+        </div>
+        <div
+          className="container"
+          key="barchart-container2"
+          style={{ width: `${cWidth2}px`, height: `${cHeight2}px` }}
+        >
+          <Barchart
+            fill={cFill2}
+            unitX={SampleData[cDataIndex2].unitX}
+            unitY={SampleData[cDataIndex2].unitY}
+            displayLabel={cDisplayLabel2}
+            displayTooltip={cDisplayTooltip2}
+            dataX={SampleData[cDataIndex2].dataX}
+            dataY={SampleData[cDataIndex2].dataY}
+          />
+        </div>
       </div>
     </>
   );
