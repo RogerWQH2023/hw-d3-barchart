@@ -44,6 +44,7 @@ function App() {
   const [cWidth, setCWidth] = useState(400);
   const [cHeight, setCHeight] = useState(300);
   const [cFill, setCFill] = useState("#e66465");
+  const [cDisplayLabel, setCDisplayLabel] = useState(true);
   const [cDataIndex, setCDataIndex] = useState(2);
 
   return (
@@ -86,6 +87,17 @@ function App() {
           value={cFill}
           onChange={(e: any) => {
             setCFill(e.target.value);
+          }}
+        />
+        <br />
+        <label>Display Label:</label>
+        <input
+          type="checkbox"
+          id="input-label-checkbox"
+          name="scales"
+          checked={cDisplayLabel}
+          onChange={(e) => {
+            setCDisplayLabel(!cDisplayLabel);
           }}
         />
         <br />
@@ -142,6 +154,7 @@ function App() {
           fill={cFill}
           unitX={SampleData[cDataIndex].unitX}
           unitY={SampleData[cDataIndex].unitY}
+          displayLabel={cDisplayLabel}
           dataX={SampleData[cDataIndex].dataX}
           dataY={SampleData[cDataIndex].dataY}
         />

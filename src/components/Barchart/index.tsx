@@ -25,6 +25,7 @@ const DrawChart = (
   fill: string,
   unitX: string,
   unitY: string,
+  displayLabel: boolean,
   dataX: Array<string>,
   dataY: Array<number>
 ) => {
@@ -99,38 +100,28 @@ const DrawChart = (
       }
     });
 
-  /*   //添加数字注记：尚未成功
-  svg
-    .selectAll("g")
-    .data(dataY)
-    .enter()
-    .append("text")
-    .attr("x", (d, i) => x(dataX[i]) as number)
-    .attr("y", (d) => {
-      if (d >= 0) {
-        return y(d);
-      } else {
-        return y(0);
-      }
-    })
-    .attr("width", x.bandwidth())
-    .attr("height", (d) => {
-      console.log("d:" + d);
-      console.log("y(d):" + y(d));
-      if (d >= 0) {
-        return (
-          height -
-          y(d) -
-          (y(min([0, min(dataY) as number]) as number) - y(0)) -
-          marginBottom
-        );
-      } else {
-        return y(d) - y(0);
-      }
-    })
-    .text((d) => d)
-    .attr("font-size", 10)
-    .attr("text-anchor", "middle"); */
+  //设置一个g用于存储注记
+  svg.append("g").attr("id", "svg-bar-texts");
+  if (displayLabel) {
+    //添加数字注记
+    svg
+      .select("#svg-bar-texts")
+      .selectAll("g")
+      .data(dataY)
+      .enter()
+      .append("text")
+      .attr("x", (d, i) => x(dataX[i]) as number)
+      .attr("y", (d) => {
+        if (d >= 0) {
+          return y(d);
+        } else {
+          return y(0);
+        }
+      })
+      .text((d) => d)
+      .attr("font-size", 10)
+      .attr("text-anchor", "middle");
+  }
 
   //绘制坐标轴
   //注意需要设置id，之后更新时调用！
@@ -169,6 +160,7 @@ const UpdateChart = (
   fill: string,
   unitX: string,
   unitY: string,
+  displayLabel: boolean,
   dataX: Array<string>,
   dataY: Array<number>
 ) => {
@@ -200,10 +192,10 @@ const UpdateChart = (
   //enter()步骤里面，补齐了缺少的rect
   //exit()步骤里面，删除了多余的rect
   //！！enter和exit并不会同时起效果，如果少了了则enter+append，如果多了则exit+remove。
-  //这里因为不知道是哪种情况，所以都写上去了，但是其实只有一个有效果。
-  const bars = svg.select("#svg-bars").selectAll("rect").data(dataY);
-  bars.enter().append("rect");
-  bars.exit().remove();
+  //这里因为没法提前知道是哪种情况，所以都写上去了，但是其实只有一个有效果。
+  const bars = svg.select("#svg-bars").selectAll("rect");
+  bars.data(dataY).enter().append("rect");
+  bars.data(dataY).exit().remove();
   //在处理完拓展/删除后，重新选中所有的柱状图，完成更新。
   svg
     .select("#svg-bars")
@@ -237,6 +229,36 @@ const UpdateChart = (
         return y(d) - y(0);
       }
     });
+
+  //更新注记（猜测：有enter才能触发append，有exit才能触发remove）
+  //进行注记图元的增删
+  const bartexts = svg.select("#svg-bar-texts").selectAll("text");
+  if (displayLabel) {
+    bartexts.data(dataY).enter().append("text");
+    bartexts.data(dataY).exit().remove();
+    //更新数字注记
+    svg
+      .select("#svg-bar-texts")
+      .selectAll("text")
+      .data(dataY)
+      .transition()
+      .duration(DEFAULT_DURATION)
+      .style("fill", fill)
+      .attr("text-anchor", "middle") //文字水平居中
+      .attr("alignment-baseline", "middle") //文字垂直居中;
+      .attr("x", (d, i) => (x(dataX[i]) as number) + 0.5 * x.bandwidth())
+      .attr("y", (d) => {
+        if (d >= 0) {
+          return y(d) - 5;
+        } else {
+          return y(d) + 5;
+        }
+      })
+      .text((d) => d)
+      .attr("font-size", 10);
+  } else {
+    bartexts.remove();
+  }
 
   //更新坐标轴
   svg
@@ -290,10 +312,11 @@ const Barchart = (props: {
   fill: string;
   unitX: string;
   unitY: string;
+  displayLabel: boolean;
   dataX: Array<string>;
   dataY: Array<number>;
 }) => {
-  const { fill, unitX, unitY, dataX, dataY } = props;
+  const { fill, unitX, unitY, displayLabel, dataX, dataY } = props;
   const barchatAppRef = useRef<HTMLDivElement>(null);
   const [cWidth, setCWidth] = useState(100);
   const [cHeight, setCHeight] = useState(100);
@@ -319,7 +342,7 @@ const Barchart = (props: {
   //创建svg，只在开始时运行一次，之后全使用UpdateChart进行更新
   //当组件卸载时，自动析构
   useEffect(() => {
-    DrawChart(cWidth, cHeight, fill, unitX, unitY, dataX, dataY);
+    DrawChart(cWidth, cHeight, fill, unitX, unitY, displayLabel, dataX, dataY);
     return () => {
       clearChart(barchatAppRef);
     };
@@ -327,7 +350,16 @@ const Barchart = (props: {
 
   //组件更新的副作用。当长/宽或传入属性发生变化时使用UpdateChart进行更新
   useEffect(() => {
-    UpdateChart(cWidth, cHeight, fill, unitX, unitY, dataX, dataY);
+    UpdateChart(
+      cWidth,
+      cHeight,
+      fill,
+      unitX,
+      unitY,
+      displayLabel,
+      dataX,
+      dataY
+    );
   }, [cWidth, cHeight, props]);
 
   return (
