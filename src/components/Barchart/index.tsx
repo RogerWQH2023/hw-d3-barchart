@@ -26,6 +26,7 @@ const DrawChart = (
   unitX: string,
   unitY: string,
   displayLabel: boolean,
+  displayTooltip: boolean,
   dataX: Array<string>,
   dataY: Array<number>
 ) => {
@@ -61,7 +62,7 @@ const DrawChart = (
   const x = scaleBand(xDomain, [marginLeft, width - marginRight]).padding(0.2);
 
   //！！！设置一个g用于存储柱形图（需要先append这个g，然后再select("#id").selectAll("g")才能再这个g里面绘制，我也不知道为什么）
-  svg.append("g").attr("id", "svg-bars");
+  svg.append("g").attr("class", "svg-bars");
 
   // 绘制柱形（本质上为矩形）。
   //大致原理：使用.data(dataY)作为Y轴导入数据，使用.enter(),之后的链式调用会变成对dataY中的每个值进行操作。
@@ -69,7 +70,7 @@ const DrawChart = (
   //y(d)，其实就是当前的值d，在坐标轴y上所处的位置的y轴坐标。（坐标是从svg原点即左上角开始计算的）
   //由此区分正和负两种值，即可完成计算。
   svg
-    .select("#svg-bars")
+    .select(".svg-bars")
     .selectAll("g")
     .data(dataY)
     .enter()
@@ -101,11 +102,11 @@ const DrawChart = (
     });
 
   //设置一个g用于存储注记
-  svg.append("g").attr("id", "svg-bar-texts");
+  svg.append("g").attr("class", "svg-bar-texts");
   if (displayLabel) {
     //添加数字注记
     svg
-      .select("#svg-bar-texts")
+      .select(".svg-bar-texts")
       .selectAll("g")
       .data(dataY)
       .enter()
@@ -123,23 +124,55 @@ const DrawChart = (
       .attr("text-anchor", "middle");
   }
 
+  //增加柱状图交互，显示Tooltip
+  const tooltip = div
+    .append("div")
+    .attr("class", "svg-barchart-tooltip")
+    .style("height", "20px")
+    .style("position", "fixed")
+    .style("padding", "5px")
+    .style("background", "#fff")
+    .style("border-radius", "3px")
+    .style("box-shadow", "1px 1px 1px rgba(0, 0, 0, 0.5)")
+    .style("display", "none");
+  if (displayTooltip) {
+    svg
+      .select(".svg-bars")
+      .selectAll("rect")
+      .data(dataY)
+      .on("mouseover", function (event, d) {
+        select(this).style("filter", "brightness(1.5)"); // 亮度增加
+        tooltip.style("display", "block");
+      })
+      .on("mousemove", function (event, d) {
+        tooltip
+          .style("left", Number(event.offsetX) + "px")
+          .style("top", Number(event.offsetY) - 40 + "px")
+          .html(`${d}`);
+      })
+      .on("mouseout", function (d) {
+        select(this).style("filter", "brightness(1)"); // 亮度恢复
+        tooltip.style("display", "none");
+      });
+  }
+
   //绘制坐标轴
   //注意需要设置id，之后更新时调用！
   svg
     .append("g")
-    .attr("id", "svg-axisBottom")
+    .attr("class", "svg-axisBottom")
     .attr("transform", `translate(0,${y(0)})`)
     .call(axisBottom(x));
   svg
     .append("g")
-    .attr("id", "svg-axisLeft")
+    .attr("class", "svg-axisLeft")
     .attr("transform", `translate(${marginLeft}, 0)`)
     .call(axisLeft(y));
   //绘制单位（注意要用id标识，之后还要用）
   svg
     .append("text")
     .text(unitY)
-    .attr("id", "svg-unitLeft")
+    .attr("class", "svg-unitLeft")
     .attr("text-anchor", "middle") //文字水平居中
     .attr("x", marginLeft)
     .attr("y", marginTop - 12)
@@ -147,7 +180,7 @@ const DrawChart = (
   svg
     .append("text")
     .text(unitX)
-    .attr("id", "svg-unitBottom")
+    .attr("class", "svg-unitBottom")
     .attr("width", 40)
     .attr("text-anchor", "middle") //文字水平居中
     .attr("x", width - marginRight)
@@ -161,6 +194,7 @@ const UpdateChart = (
   unitX: string,
   unitY: string,
   displayLabel: boolean,
+  displayTooltip: boolean,
   dataX: Array<string>,
   dataY: Array<number>
 ) => {
@@ -174,7 +208,9 @@ const UpdateChart = (
   const xDomain = dataX;
 
   //选中作为容器的元素
-  const svg = select("svg");
+  const div = select("#barchatApp");
+  //选中svg元素
+  const svg = div.select("svg");
 
   svg.attr("width", width);
   svg.attr("height", height);
@@ -193,12 +229,12 @@ const UpdateChart = (
   //exit()步骤里面，删除了多余的rect
   //！！enter和exit并不会同时起效果，如果少了了则enter+append，如果多了则exit+remove。
   //这里因为没法提前知道是哪种情况，所以都写上去了，但是其实只有一个有效果。
-  const bars = svg.select("#svg-bars").selectAll("rect");
+  const bars = svg.select(".svg-bars").selectAll("rect");
   bars.data(dataY).enter().append("rect");
   bars.data(dataY).exit().remove();
   //在处理完拓展/删除后，重新选中所有的柱状图，完成更新。
   svg
-    .select("#svg-bars")
+    .select(".svg-bars")
     .selectAll("rect")
     .data(dataY)
     .transition()
@@ -232,13 +268,13 @@ const UpdateChart = (
 
   //更新注记（猜测：有enter才能触发append，有exit才能触发remove）
   //进行注记图元的增删
-  const bartexts = svg.select("#svg-bar-texts").selectAll("text");
+  const bartexts = svg.select(".svg-bar-texts").selectAll("text");
   if (displayLabel) {
     bartexts.data(dataY).enter().append("text");
     bartexts.data(dataY).exit().remove();
     //更新数字注记
     svg
-      .select("#svg-bar-texts")
+      .select(".svg-bar-texts")
       .selectAll("text")
       .data(dataY)
       .transition()
@@ -260,16 +296,47 @@ const UpdateChart = (
     bartexts.remove();
   }
 
+  //更新标签
+  const tooltip = div.select(".svg-barchart-tooltip");
+  //删除原事件
+  svg
+    .select(".svg-bars")
+    .selectAll("rect")
+    .on("mouseover", null)
+    .on("mouseout", null)
+    .on("mousemove", null);
+  if (displayTooltip) {
+    //新增事件
+    svg
+      .select(".svg-bars")
+      .selectAll("rect")
+      .data(dataY)
+      .on("mouseover", function (event, d) {
+        select(this).style("filter", "brightness(1.5)"); // 亮度增加
+        tooltip.style("display", "block");
+      })
+      .on("mousemove", function (event, d) {
+        tooltip
+          .style("left", Number(event.offsetX) + "px")
+          .style("top", Number(event.offsetY) - 40 + "px")
+          .html(`${d}`);
+      })
+      .on("mouseout", function (d) {
+        select(this).style("filter", "brightness(1)"); // 亮度恢复
+        tooltip.style("display", "none");
+      });
+  }
+
   //更新坐标轴
   svg
-    .select("#svg-axisBottom")
+    .select(".svg-axisBottom")
     .transition()
     .duration(DEFAULT_DURATION)
     .style("z-index", 2)
     .attr("transform", `translate(0,${y(0)})`)
     .call(axisBottom(x) as any);
   svg
-    .select("#svg-axisLeft")
+    .select(".svg-axisLeft")
     .transition()
     .duration(DEFAULT_DURATION)
     .style("z-index", 2)
@@ -277,7 +344,7 @@ const UpdateChart = (
     .call(axisLeft(y) as any);
   //更新单位
   svg
-    .select("#svg-unitLeft")
+    .select(".svg-unitLeft")
     .transition()
     .duration(DEFAULT_DURATION)
     .text(unitY)
@@ -286,7 +353,7 @@ const UpdateChart = (
     .attr("y", marginTop - 12)
     .attr("font-size", 10);
   svg
-    .select("#svg-unitBottom")
+    .select(".svg-unitBottom")
     .transition()
     .duration(DEFAULT_DURATION)
     .text(unitX)
@@ -313,10 +380,12 @@ const Barchart = (props: {
   unitX: string;
   unitY: string;
   displayLabel: boolean;
+  displayTooltip: boolean;
   dataX: Array<string>;
   dataY: Array<number>;
 }) => {
-  const { fill, unitX, unitY, displayLabel, dataX, dataY } = props;
+  const { fill, unitX, unitY, displayLabel, displayTooltip, dataX, dataY } =
+    props;
   const barchatAppRef = useRef<HTMLDivElement>(null);
   const [cWidth, setCWidth] = useState(100);
   const [cHeight, setCHeight] = useState(100);
@@ -342,7 +411,17 @@ const Barchart = (props: {
   //创建svg，只在开始时运行一次，之后全使用UpdateChart进行更新
   //当组件卸载时，自动析构
   useEffect(() => {
-    DrawChart(cWidth, cHeight, fill, unitX, unitY, displayLabel, dataX, dataY);
+    DrawChart(
+      cWidth,
+      cHeight,
+      fill,
+      unitX,
+      unitY,
+      displayLabel,
+      displayTooltip,
+      dataX,
+      dataY
+    );
     return () => {
       clearChart(barchatAppRef);
     };
@@ -357,6 +436,7 @@ const Barchart = (props: {
       unitX,
       unitY,
       displayLabel,
+      displayTooltip,
       dataX,
       dataY
     );
@@ -365,7 +445,7 @@ const Barchart = (props: {
   return (
     <div
       style={{
-        position: "absolute",
+        position: "relative",
         width: "100%",
         height: "100%",
         backgroundColor: "rgb(230,230,230)",

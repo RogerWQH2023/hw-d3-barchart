@@ -45,6 +45,7 @@ function App() {
   const [cHeight, setCHeight] = useState(300);
   const [cFill, setCFill] = useState("#e66465");
   const [cDisplayLabel, setCDisplayLabel] = useState(true);
+  const [cDisplayTooltip, setCDisplayTooltip] = useState(true);
   const [cDataIndex, setCDataIndex] = useState(2);
 
   return (
@@ -94,10 +95,19 @@ function App() {
         <input
           type="checkbox"
           id="input-label-checkbox"
-          name="scales"
           checked={cDisplayLabel}
           onChange={(e) => {
             setCDisplayLabel(!cDisplayLabel);
+          }}
+        />
+        <br />
+        <label>Display Tooltip:</label>
+        <input
+          type="checkbox"
+          id="input-tooltip-checkbox"
+          checked={cDisplayTooltip}
+          onChange={(e) => {
+            setCDisplayTooltip(!cDisplayTooltip);
           }}
         />
         <br />
@@ -155,6 +165,7 @@ function App() {
           unitX={SampleData[cDataIndex].unitX}
           unitY={SampleData[cDataIndex].unitY}
           displayLabel={cDisplayLabel}
+          displayTooltip={cDisplayTooltip}
           dataX={SampleData[cDataIndex].dataX}
           dataY={SampleData[cDataIndex].dataY}
         />
