@@ -14,7 +14,9 @@ import { v4 as uuidv4 } from "uuid";
 const DEFAULT_DURATION = 300;
 //为当前柱状图组件的入口元素设置一个唯一的UUID，用于防止不同柱状图组件之间相互冲突
 //由于id的首位不能是数字，所以前面加一个barchart
-const APPUUID = "barchartapp-" + uuidv4();
+const generateUUID = () => {
+  return "barchartapp-" + uuidv4();
+};
 
 /**
  * 绘制柱状图
@@ -29,6 +31,7 @@ const APPUUID = "barchartapp-" + uuidv4();
  * @param dataY 图表y轴数据
  */
 const DrawChart = (
+  appUUID: string,
   width: number,
   height: number,
   fill: string,
@@ -51,7 +54,7 @@ const DrawChart = (
   const xDomain = dataX;
 
   //选中作为容器的元素
-  const div = select(`#${APPUUID}`);
+  const div = select(`#${appUUID}`);
 
   const svg = div.append("svg");
   svg.attr("width", width);
@@ -203,6 +206,7 @@ const DrawChart = (
  * @param dataY 图表y轴数据
  */
 const UpdateChart = (
+  appUUID: string,
   width: number,
   height: number,
   fill: string,
@@ -223,7 +227,7 @@ const UpdateChart = (
   const xDomain = dataX;
 
   //选中作为容器的元素
-  const div = select(`#${APPUUID}`);
+  const div = select(`#${appUUID}`);
   //选中svg元素
   const svg = div.select("svg");
 
@@ -377,8 +381,8 @@ const UpdateChart = (
     .attr("font-size", 10);
 };
 //根据当前APP的APPUUID来清除所有svg
-const clearChart = () => {
-  select(`#${APPUUID}`).selectAll("svg").remove();
+const clearChart = (appUUID: string) => {
+  select(`#${appUUID}`).selectAll("svg").remove();
 };
 
 /**
@@ -405,7 +409,8 @@ const Barchart = (props: {
     dataX,
     dataY,
   } = props;
-  const barchatAppRef = useRef<HTMLDivElement>(null);
+  const barchartAppRef = useRef<HTMLDivElement>(null);
+  const barchartAppUUID = useRef<string>(generateUUID());
   const [cWidth, setCWidth] = useState(100);
   const [cHeight, setCHeight] = useState(100);
 
@@ -420,8 +425,8 @@ const Barchart = (props: {
       }
     });
 
-    if (barchatAppRef.current) {
-      resizeObserver.observe(barchatAppRef.current);
+    if (barchartAppRef.current) {
+      resizeObserver.observe(barchartAppRef.current);
     }
 
     return () => resizeObserver.disconnect();
@@ -431,6 +436,7 @@ const Barchart = (props: {
   //当组件卸载时，自动析构
   useEffect(() => {
     DrawChart(
+      barchartAppUUID.current,
       cWidth,
       cHeight,
       fill,
@@ -442,13 +448,14 @@ const Barchart = (props: {
       dataY
     );
     return () => {
-      clearChart();
+      clearChart(barchartAppUUID.current);
     };
   }, []);
 
   //组件更新的副作用。当长/宽或传入属性发生变化时使用UpdateChart进行更新
   useEffect(() => {
     UpdateChart(
+      barchartAppUUID.current,
       cWidth,
       cHeight,
       fill,
@@ -464,13 +471,13 @@ const Barchart = (props: {
   return (
     <div
       style={{
-        position: "relative",
+        position: "absolute",
         width: "100%",
         height: "100%",
         backgroundColor: "rgb(230,230,230)",
       }}
-      id={APPUUID}
-      ref={barchatAppRef}
+      id={barchartAppUUID.current}
+      ref={barchartAppRef}
     ></div>
   );
 };
