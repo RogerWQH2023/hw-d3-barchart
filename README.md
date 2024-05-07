@@ -12,4 +12,5 @@ demo网站：[CloudFlare Demo网站](https://hw-d3-barchart.pages.dev/)
   - [x] 可选的label
   - [x] 可选的交互（显示tooltip）
   - [x] 柱状图动态更新（transition）
-  - [ ] 支持多个barchart同时使用？（目前的select方法可能导致多个组件之间发生冲突）
+  - [x] 支持多个barchart同时使用？（目前的select方法可能导致多个组件之间发生冲突）
+    - 引入了UUID包，每个柱状图组件的入口id由uuidv4()生成，防止相互冲突
