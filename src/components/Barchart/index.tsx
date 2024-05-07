@@ -91,8 +91,6 @@ const DrawChart = (
     })
     .attr("width", x.bandwidth())
     .attr("height", (d) => {
-      console.log("d:" + d);
-      console.log("y(d):" + y(d));
       if (d >= 0) {
         //如果当前数据大于0，则其高度应该为height-y(d)再减去y(0)到y(min)的差距（当y(min)=y(0)时这段为0）,再减去marginBottom
         return (
@@ -268,8 +266,6 @@ const UpdateChart = (
     })
     .attr("width", x.bandwidth())
     .attr("height", (d) => {
-      console.log("d:" + d);
-      console.log("y(d):" + y(d));
       if (d >= 0) {
         //如果当前数据大于0，则其高度应该为height-y(d)再减去y(0)到y(min)的差距（当y(min)=y(0)时这段为0）,再减去marginBottom
         return (
