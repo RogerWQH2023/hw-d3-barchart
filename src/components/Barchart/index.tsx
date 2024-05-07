@@ -8,17 +8,26 @@ import {
   axisBottom,
   axisLeft,
 } from "d3";
+import { v4 as uuidv4 } from "uuid";
+
+//全局转换动画的持续时间
+const DEFAULT_DURATION = 300;
+//为当前柱状图组件的入口元素设置一个唯一的UUID，用于防止不同柱状图组件之间相互冲突
+//由于id的首位不能是数字，所以前面加一个barchart
+const APPUUID = "barchartapp-" + uuidv4();
+
 /**
- *
+ * 绘制柱状图
  * @param width 图表宽度
  * @param height 图表高度
  * @param fill 图表填充色
+ * @param unitX X轴单位
+ * @param unitY Y轴单位
+ * @param displayLabel 是否显示标签
+ * @param displayTooltip 是否让柱状图交互显示ToolTip
  * @param dataX 图表X轴数据
  * @param dataY 图表y轴数据
  */
-
-const DEFAULT_DURATION = 300;
-
 const DrawChart = (
   width: number,
   height: number,
@@ -30,11 +39,7 @@ const DrawChart = (
   dataX: Array<string>,
   dataY: Array<number>
 ) => {
-  /*
-  //（现在数据由参数传入）输入数据，这里dataY作为实际的值，而dataX作为X轴的标签 
-  //const dataY = [-10, -50, -100, -150, -200, -250, -300];
-  //const dataX = ["A", "B", "C", "D", "E", "F", "G"]; 
-  */
+  //（现在数据由参数传入）输入数据，这里dataY作为实际的值，而dataX作为X轴的标签
 
   //接下来创建坐标轴的范围（一个数组），决定了我们坐标轴上的最大和最小值
   //如果dataY有负数则最小为该值，否则为0
@@ -46,7 +51,7 @@ const DrawChart = (
   const xDomain = dataX;
 
   //选中作为容器的元素
-  const div = select("#barchatApp");
+  const div = select(`#${APPUUID}`);
 
   const svg = div.append("svg");
   svg.attr("width", width);
@@ -187,6 +192,18 @@ const DrawChart = (
     .attr("y", y(0) + 18)
     .attr("font-size", 10);
 };
+/**
+ * 更新柱状图状态
+ * @param width 图表宽度
+ * @param height 图表高度
+ * @param fill 图表填充色
+ * @param unitX X轴单位
+ * @param unitY Y轴单位
+ * @param displayLabel 是否显示标签
+ * @param displayTooltip 是否让柱状图交互显示ToolTip
+ * @param dataX 图表X轴数据
+ * @param dataY 图表y轴数据
+ */
 const UpdateChart = (
   width: number,
   height: number,
@@ -208,7 +225,7 @@ const UpdateChart = (
   const xDomain = dataX;
 
   //选中作为容器的元素
-  const div = select("#barchatApp");
+  const div = select(`#${APPUUID}`);
   //选中svg元素
   const svg = div.select("svg");
 
@@ -363,10 +380,9 @@ const UpdateChart = (
     .attr("y", y(0) + 18)
     .attr("font-size", 10);
 };
-const clearChart = (element: any) => {
-  if (element.current) {
-    element.current.innerHTML = "";
-  }
+//根据当前APP的APPUUID来清除所有svg
+const clearChart = () => {
+  select(`#${APPUUID}`).selectAll("svg").remove();
 };
 
 /**
@@ -376,16 +392,23 @@ const clearChart = (element: any) => {
  * @returns
  */
 const Barchart = (props: {
-  fill: string;
-  unitX: string;
-  unitY: string;
-  displayLabel: boolean;
-  displayTooltip: boolean;
+  fill?: string;
+  unitX?: string;
+  unitY?: string;
+  displayLabel?: boolean;
+  displayTooltip?: boolean;
   dataX: Array<string>;
   dataY: Array<number>;
 }) => {
-  const { fill, unitX, unitY, displayLabel, displayTooltip, dataX, dataY } =
-    props;
+  const {
+    fill = "steelblue",
+    unitX = "",
+    unitY = "",
+    displayLabel = true,
+    displayTooltip = true,
+    dataX,
+    dataY,
+  } = props;
   const barchatAppRef = useRef<HTMLDivElement>(null);
   const [cWidth, setCWidth] = useState(100);
   const [cHeight, setCHeight] = useState(100);
@@ -423,7 +446,7 @@ const Barchart = (props: {
       dataY
     );
     return () => {
-      clearChart(barchatAppRef);
+      clearChart();
     };
   }, []);
 
@@ -450,7 +473,7 @@ const Barchart = (props: {
         height: "100%",
         backgroundColor: "rgb(230,230,230)",
       }}
-      id="barchatApp"
+      id={APPUUID}
       ref={barchatAppRef}
     ></div>
   );
