@@ -49,7 +49,7 @@ function App() {
   const [cDataIndex, setCDataIndex] = useState(2);
   const [cWidth2, setCWidth2] = useState(500);
   const [cHeight2, setCHeight2] = useState(450);
-  const [cFill2, setCFill2] = useState("rgb(70, 155, 221)");
+  const [cFill2, setCFill2] = useState("#469BDD");
   const [cDisplayLabel2, setCDisplayLabel2] = useState(true);
   const [cDisplayTooltip2, setCDisplayTooltip2] = useState(true);
   const [cDataIndex2, setCDataIndex2] = useState(3);
