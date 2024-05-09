@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  BarchartOptions,
   clearChart,
   defaultBarchartOptions,
   DrawChart,
   UpdateChart,
 } from "./core";
-
+import type { BarchartOptions } from "./core";
 /**
  *
  * @param props
