@@ -275,13 +275,15 @@ function App() {
           style={{ width: `${cWidth}px`, height: `${cHeight}px` }}
         >
           <Barchart
-            fill={cFill}
-            unitX={SampleData[cDataIndex].unitX}
-            unitY={SampleData[cDataIndex].unitY}
-            displayLabel={cDisplayLabel}
-            displayTooltip={cDisplayTooltip}
-            dataX={SampleData[cDataIndex].dataX}
-            dataY={SampleData[cDataIndex].dataY}
+            barchartOptions={{
+              fill: cFill,
+              unitX: SampleData[cDataIndex].unitX,
+              unitY: SampleData[cDataIndex].unitY,
+              displayLabel: cDisplayLabel,
+              displayTooltip: cDisplayTooltip,
+              dataX: SampleData[cDataIndex].dataX,
+              dataY: SampleData[cDataIndex].dataY,
+            }}
           />
         </div>
         <div
@@ -290,13 +292,15 @@ function App() {
           style={{ width: `${cWidth2}px`, height: `${cHeight2}px` }}
         >
           <Barchart
-            fill={cFill2}
-            unitX={SampleData[cDataIndex2].unitX}
-            unitY={SampleData[cDataIndex2].unitY}
-            displayLabel={cDisplayLabel2}
-            displayTooltip={cDisplayTooltip2}
-            dataX={SampleData[cDataIndex2].dataX}
-            dataY={SampleData[cDataIndex2].dataY}
+            barchartOptions={{
+              fill: cFill2,
+              unitX: SampleData[cDataIndex2].unitX,
+              unitY: SampleData[cDataIndex2].unitY,
+              displayLabel: cDisplayLabel2,
+              displayTooltip: cDisplayTooltip2,
+              dataX: SampleData[cDataIndex2].dataX,
+              dataY: SampleData[cDataIndex2].dataY,
+            }}
           />
         </div>
       </div>
